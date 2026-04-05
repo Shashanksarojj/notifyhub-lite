@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NotifyHub Lite</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        input, select, button { margin: 5px; padding: 5px; }
+        table { border-collapse: collapse; margin-top: 20px; }
+        td, th { border: 1px solid #ccc; padding: 8px; }
+    </style>
+</head>
+<body>
+
+<h2>🚀 NotifyHub Lite</h2>
+
+<div>
+    <input id="recipient" placeholder="Recipient"/>
+    <input id="message" placeholder="Message"/>
+    <select id="type">
+        <option value="EMAIL">EMAIL</option>
+        <option value="SMS">SMS</option>
+        <option value="WEBHOOK">WEBHOOK</option>
+    </select>
+    <button onclick="sendNotification()">Send</button>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Recipient</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Retry</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+    async function sendNotification() {
+        const recipient = document.getElementById("recipient").value;
+        const message = document.getElementById("message").value;
+        const type = document.getElementById("type").value;
+
+        await fetch('/api/notifications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ recipient, message, type })
+        });
+
+        loadNotifications();
+    }
+
+    async function loadNotifications() {
+        const res = await fetch('/api/notifications');
+        const data = await res.json();
+
+        const table = document.getElementById("tableBody");
+        table.innerHTML = "";
+
+        data.forEach(n => {
+            table.innerHTML += `
+            <tr>
+                <td>${n.id}</td>
+                <td>${n.recipient}</td>
+                <td>${n.type}</td>
+                <td>${n.status}</td>
+                <td>${n.retryCount}</td>
+            </tr>
+        `;
+        });
+    }
+
+    // 🔄 auto refresh every 3 sec
+    setInterval(loadNotifications, 3000);
+
+    loadNotifications();
+</script>
+
+</body>
+</html>

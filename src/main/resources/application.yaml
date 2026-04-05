@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: notifyhub-lite
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/notifyhub
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # ✅ NOW CORRECT
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  task:
+    execution:
+      pool:
+        core-size: 2
+        max-size: 4
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.notifyhub: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n"
